@@ -1,13 +1,12 @@
 from flask import Flask, request
+import os # Importamos el módulo OS para leer variables de entorno
 
-# ⚠️ 1. CONFIGURACIÓN IMPORTANTE ⚠️
+# 1. CONFIGURACIÓN 
 VERIFY_TOKEN = "JulianaMu" 
-PUERTO_FLASK = 5000 
 
 app = Flask(__name__)
 
 # --- RUTA DE VERIFICACIÓN (GET) ---
-# Meta usa esta ruta para verificar que el puerto esté abierto
 @app.route("/webhook", methods=["GET"])
 def verify():
     mode = request.args.get("hub.mode")
@@ -16,21 +15,27 @@ def verify():
 
     if mode == "subscribe" and token == VERIFY_TOKEN:
         print("Webhook verificado y puerto abierto ✅")
-        return challenge, 200
+        return challenge, 200 
     else:
         print("Token de verificación incorrecto ❌")
         return "Token de verificación incorrecto", 403
 
 # --- RUTA DE RECEPCIÓN (POST) ---
-# Meta usa esta ruta para enviar mensajes (lo probaremos después)
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json()
+    
+    # LOG DE DEPURACIÓN: Imprime los datos que Meta te está enviando
+    print("DATOS RECIBIDOS:", data)
+    
     print("¡Conexión POST exitosa! El puerto está abierto.")
-    # NO procesa ni responde, solo confirma que llegó
     return "OK", 200 
 
 # --- INICIO DEL SERVIDOR ---
 if __name__ == "__main__":
-    print(f"Iniciando servidor en puerto {PUERTO_FLASK}...")
-    app.run(host="0.0.0.0", port=PUERTO_FLASK, debug=True)
+    # La variable 'PORT' se lee del entorno (será 10000 en Render)
+    # Si no está definida (si lo corres localmente), usa 5000 por defecto
+    port = int(os.environ.get("PORT", 5000)) 
+    
+    print(f"Iniciando servidor en puerto {port}...")
+    app.run(host="0.0.0.0", port=port, debug=True)
