@@ -2,7 +2,7 @@ from flask import Flask, request
 import os # Importamos el módulo OS para leer variables de entorno
 
 # 1. CONFIGURACIÓN 
-VERIFY_TOKEN = "JulianaMu" 
+VERIFY_TOKEN = "Juliana12" 
 
 app = Flask(__name__)
 
@@ -14,10 +14,10 @@ def verify():
     challenge = request.args.get("hub.challenge")
 
     if mode == "subscribe" and token == VERIFY_TOKEN:
-        print("Webhook verificado y puerto abierto ✅")
+        print("Webhook verificado y puerto abierto ")
         return challenge, 200 
     else:
-        print("Token de verificación incorrecto ❌")
+        print("Token de verificación incorrecto ")
         return "Token de verificación incorrecto", 403
 
 # --- RUTA DE RECEPCIÓN (POST) ---
